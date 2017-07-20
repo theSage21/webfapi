@@ -6,9 +6,11 @@ app = bottle.Bottle()
 PWD = os.getcwd()
 
 
-@app.get('/ls')
+@app.post('/ls')
 def ls():
-    p = run('ls {}'.format(PWD), stderr=PIPE, stdout=PIPE, shell=True)
+    argv = bottle.request.json['argv']
+    command = ' '.join(['cd', PWD, '&&', 'ls'] + argv)
+    p = run(command, stderr=PIPE, stdout=PIPE, shell=True)
     data = {'return_code': p.returncode,
             'stdout': p.stdout.decode(),
             'stderr': p.stderr.decode()}
@@ -17,15 +19,17 @@ def ls():
 
 @app.post('/cd')
 def cd():
-    path = bottle.request.json['path']
-    p = run('cd {} && pwd'.format(path), stderr=PIPE, stdout=PIPE, shell=True)
+    argv = bottle.request.json['argv']
+    command = ' '.join(['cd', PWD, '&&', 'cd'] + argv)
+    global PWD
+    PWD = os.path.join(PWD, argv[0])
+    print(PWD)
+    p = run(command, stderr=PIPE, stdout=PIPE, shell=True)
     data = {'return_code': p.returncode,
             'stdout': p.stdout.decode(),
             'stderr': p.stderr.decode()}
-    global PWD
-    PWD = data['stdout'].strip()
     return data
 
 
 if __name__ == '__main__':
-    app.run(server='paste')
+    app.run(server='paste', debug=True)

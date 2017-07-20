@@ -6,7 +6,8 @@ def url(x):
 
 
 def test_ls():
-    resp = requests.get(url('ls'))
+    data = {'argv': []}
+    resp = requests.post(url('ls'), json=data)
     json = resp.json()
     assert json['return_code'] == 0
     assert json['stderr'].strip() == ''
