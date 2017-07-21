@@ -2,12 +2,13 @@ import os
 import bottle
 from subprocess import run, PIPE
 
-app = bottle.Bottle()
 PWD = os.getcwd()
+app = bottle.Bottle()
 
 
 @app.post('/ls')
 def ls():
+    global PWD
     argv = bottle.request.json['argv']
     command = ' '.join(['cd', PWD, '&&', 'ls'] + argv)
     p = run(command, stderr=PIPE, stdout=PIPE, shell=True)
@@ -19,9 +20,9 @@ def ls():
 
 @app.post('/cd')
 def cd():
+    global PWD
     argv = bottle.request.json['argv']
     command = ' '.join(['cd', PWD, '&&', 'cd'] + argv)
-    global PWD
     PWD = os.path.join(PWD, argv[0])
     print(PWD)
     p = run(command, stderr=PIPE, stdout=PIPE, shell=True)
