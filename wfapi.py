@@ -22,15 +22,21 @@ def ls():
 def cd():
     global PWD
     argv = bottle.request.json['argv']
-    command = ' '.join(['cd', PWD, '&&', 'cd'] + argv)
+    command = ' '.join(['cd', PWD, '&&', 'cd'] + argv + ['&&', 'ls'])
     PWD = os.path.join(PWD, argv[0])
-    print(PWD)
+    print(PWD, command)
     p = run(command, stderr=PIPE, stdout=PIPE, shell=True)
     data = {'return_code': p.returncode,
             'stdout': p.stdout.decode(),
             'stderr': p.stderr.decode()}
+    print(data)
     return data
 
 
+@app.get('/<path:path>')
+def callback(path):
+    return bottle.static_file(path, '/home/arjoonn/webfapi')
+
+
 if __name__ == '__main__':
-    app.run(server='paste', debug=True)
+    app.run(debug=True)

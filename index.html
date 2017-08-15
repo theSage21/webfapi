@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <table style='border: 1px solid black'>
+            <tbody>
+                <tr><td id='stdout'></td></tr>
+                <tr><td id='stderr'></td></tr>
+            </tbody>
+        </table>
+        <script>
+            var url = '/ls';
+            var data = {'argv': []};
+            $.ajax({type: 'POST',
+                    url: url,
+                    data: JSON.stringify(data),
+                    success: function (retdata){
+                        console.log(retdata);
+                        $("#stdout").text(retdata['stdout']);
+                        $("#stderr").text(retdata['stderr']);
+                    },
+                    contentType: "application/json",
+                    dataType: 'json'
+            });
+        </script>
+    </body>
+</html>

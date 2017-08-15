@@ -15,7 +15,7 @@ def test_ls():
 
 
 def test_cd():
-    data = {'path': '..'}
+    data = {'argv': ['..']}
     resp = requests.post(url('cd'), json=data)
     json = resp.json()
     assert json['return_code'] == 0
